@@ -1,0 +1,43 @@
+# Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python virtual environment
+venv/
+env/
+
+# Local development environment settings
+*.sqlite3
+*.pyc
+*.pyo
+*.pyc
+*.pyo
+
+# Logs and temporary files
+*.log
+*.tmp
+logs/
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Development editor configuration files
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Compiled files and build directories
+build/
+dist/
+*.egg-info/
+
+# Environment-specific files
+*.env
+*.env.*
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
