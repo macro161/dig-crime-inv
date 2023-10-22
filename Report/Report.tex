@@ -99,7 +99,9 @@ import subprocess
 
 folder_to_watch = '/path/to/watched/folder'
 
-process = subprocess.Popen(['inotifywait', '-m', '-r', folder_to_watch], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+process = subprocess.Popen(['inotifywait', '-m', '-r', 
+            folder_to_watch], stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE)
 
 while True:
     output = process.stdout.readline().decode()
@@ -112,7 +114,8 @@ The kernel is at the heart of the Linux operating system, and its messages provi
 \begin{lstlisting}[language=Python]
 import subprocess
 
-process = subprocess.Popen(['dmesg'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+process = subprocess.Popen(['dmesg'], stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE)
 
 while True:
     output = process.stdout.readline().decode()
@@ -134,7 +137,8 @@ def on_key_release(key):
         # Stop listener on pressing ESC key
         return False
 
-with Listener(on_press=on_key_press, on_release=on_key_release) as listener:
+with Listener(on_press=on_key_press, on_release=on_key_release) as 
+        listener:
     listener.join()
 \end{lstlisting}
 
@@ -145,7 +149,8 @@ Monitoring user idle time involves determining periods of inactivity, which can 
 import subprocess
 
 try:
-    idle_time_ms = int(subprocess.check_output(['xprintidle']).decode())
+    idle_time_ms = int(subprocess.check_output(['xprintidle'])
+                        .decode())
     idle_time_sec = idle_time_ms / 1000
     print(f'User is idle for {idle_time_sec} seconds.')
 except FileNotFoundError:
@@ -159,9 +164,11 @@ Process monitoring, often performed with tools like \textbf{strace}, is essentia
 \begin{lstlisting}[language=Python]
 import subprocess
 
-pid_to_trace = '1234'  # Replace with the PID of the process you want to trace
+pid_to_trace = '1234'  # Replace with the PID of the process 
+                            you want to trace
 
-process = subprocess.Popen(['strace', '-p', pid_to_trace], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+process = subprocess.Popen(['strace', '-p', pid_to_trace], 
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 while True:
     output = process.stdout.readline().decode()
@@ -194,7 +201,8 @@ import subprocess
 
 # Install Squid if it's not already installed
 try:
-    subprocess.check_output(['apt-get', 'install', 'squid'], stderr=subprocess.STDOUT)
+    subprocess.check_output(['apt-get', 'install', 'squid'], 
+                stderr=subprocess.STDOUT)
 except subprocess.CalledProcessError as e:
     if "E: Unable to locate package" in e.output.decode():
         print("Squid package not found. Please install it manually.")
@@ -203,7 +211,8 @@ except subprocess.CalledProcessError as e:
 
 # Start the Squid service
 try:
-    subprocess.check_output(['systemctl', 'start', 'squid'], stderr=subprocess.STDOUT)
+    subprocess.check_output(['systemctl', 'start', 'squid'], 
+        stderr=subprocess.STDOUT)
     print("Squid service started.")
 except subprocess.CalledProcessError as e:
     print("Error starting Squid service:")
@@ -212,7 +221,9 @@ except subprocess.CalledProcessError as e:
 # View Squid access logs
 access_log_file = "/var/log/squid/access.log"
 try:
-    access_log_content = subprocess.check_output(['cat', access_log_file], universal_newlines=True)
+    access_log_content = subprocess
+                            .check_output(['cat', access_log_file], 
+                            universal_newlines=True)
     print(access_log_content)
 except FileNotFoundError:
     print(f"Squid access log file {access_log_file} not found.")
