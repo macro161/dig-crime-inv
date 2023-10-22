@@ -56,7 +56,9 @@ import subprocess
 
 log_file = "/var/log/auth.log"
 try:
-    log_content = subprocess.check_output(['cat', log_file], universal_newlines=True)
+    log_content = subprocess.check_output(['cat', log_file], 
+                    universal_newlines=True)
+    
     print(log_content)
 except FileNotFoundError:
     print(f"Log file {log_file} not found.")
@@ -68,7 +70,8 @@ except FileNotFoundError:
 \begin{lstlisting}[language=Python]
 import subprocess
 
-process = subprocess.Popen(['journalctl', '-f'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+process = subprocess.Popen(['journalctl', '-f'], 
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 while True:
     output = process.stdout.readline().decode()
@@ -82,7 +85,8 @@ The Linux audit framework, \textbf{auditd}, provides low-level monitoring capabi
 import subprocess
 
 try:
-    audit_rules = subprocess.check_output(['auditctl', '-l'], universal_newlines=True)
+    audit_rules = subprocess.check_output(['auditctl', '-l'], 
+        universal_newlines=True)
     print(audit_rules)
 except FileNotFoundError:
     print("Auditd is not installed or not running.")
