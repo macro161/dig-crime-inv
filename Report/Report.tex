@@ -36,11 +36,18 @@
 
 
 \sectionnonum{Introduction}
-
+\begin{enumerate}
+    \item Were the files, data or any other type of information touched or moved in any way out of the designated folder marked as 'protected'.
+    \item If files, data or any other type of information were transferred to a USB flash drive or any other external data drive.
+    \item If files, data or any other type of information were modified after selected hours (simulation - work hours).
+\end{enumerate}
 
 \sectionnonum{Existing research solutions}
-\section{Viewing system logs}
-Viewing system logs is a fundamental step in understanding user and system activities. System logs, such as authentication logs and system messages, offer insights into user logins, logouts, and critical system events. These logs are invaluable for diagnosing issues and monitoring system health. There are simple ways to do that using bash:
+In this section, a brief overview of existing solutions that were analyzed with a potential small script that would be included as a proof-of-concept implementation of a possible solution. 
+
+\section{Analysis}
+\subsection{Viewing system logs}
+One of the first possible implementations would be to make use of system logs existing in Linux OS. It is one of the fundamental steps in understanding user and system activities, such as - authentication logs and system messages, offer insights into user logins, logouts, and critical system events, and these logs are invaluable for diagnosing issues and monitoring system health. To check it out how it works OS wide, these would be the simple bash executable for checking out what type of data system logs collect:
 
 \begin{lstlisting}[language=bash]
     # To view authentication logs using the terminal
@@ -50,7 +57,7 @@ Viewing system logs is a fundamental step in understanding user and system activ
     cat /var/log/syslog
 \end{lstlisting}
 
-\noindent One of the ways to view system logs using a Python script would be and our use case:
+\noindent And if it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -64,9 +71,8 @@ except FileNotFoundError:
     print(f"Log file {log_file} not found.")
 \end{lstlisting}
 
-\subsection{Using journalctl}
-\textbf{journalctl} is a command-line utility for accessing the \textbf{systemd} journal logs in Linux. It provides a structured and comprehensive view of system activities, making it a powerful tool for tracking user behavior and system events. Continuous monitoring with the -f flag allows real-time access to logs. It is possible to use this bash command in Python as follows:
-
+\subsubsection{Using journalctl}
+\textbf{journalctl} is a command-line utility for accessing the \textbf{systemd} journal logs in Linux. It provides a structured and comprehensive view of system activities, making it a powerful tool for tracking user behavior and system events. Continuous monitoring with the -f flag allows real-time access to logs. And if it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -79,8 +85,10 @@ while True:
         print(output, end='')
 \end{lstlisting}
 
-\section{Audit Framework auditd}
-The Linux audit framework, \textbf{auditd}, provides low-level monitoring capabilities. It enables the tracking of system calls, file access, and other critical events. \textbf{auditd} is indispensable for security and compliance monitoring, ensuring a detailed record of user actions.
+\subsection{Audit Framework auditd}
+\textbf{auditd} or Linux Audit Daemon is a user-space component of the Linux Auditing System, responsible for collecting and writing audit log file records to the disk. It is, however, not responsible for viewing the logs, which can be done through ausearch or aureport utilities. Problems like remote shell running on the machine or threats arising from malefactors who have access to the machine would be possible to resolve using this tool. This looks like a great candidate for an implementation using our introductory use cases.
+
+If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -92,8 +100,8 @@ except FileNotFoundError:
     print("Auditd is not installed or not running.")
 \end{lstlisting}
 
-\section{File System Event Monitoring}
-Using tools like \textbf{inotifywait}, Linux offers the ability to monitor file system events in real time. This includes tracking file creations, modifications, deletions, and directory changes. This is crucial for data management, ensuring data integrity, and detecting unauthorized file access.
+\subsection{File System Event Monitoring}
+To monitor file system events in real time a Linux tool like \textbf{inotifywait} could be used. It includes tracking file creations, modifications, deletions, and directory changes. This is crucial for data management, ensuring data integrity, and detecting unauthorized file access. Could be one of the possible solutions for the final product depending on the scope of which it could be used and if it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -109,8 +117,8 @@ while True:
         print(output, end='')
 \end{lstlisting}
 
-\section{Viewing Kernel Messages}
-The kernel is at the heart of the Linux operating system, and its messages provide insights into system operations and health. Viewing kernel messages with the dmesg command helps diagnose hardware and driver issues, offering essential information for system administrators.
+\subsection{Viewing Kernel Messages}
+The kernel is at the heart of the Linux operating system, and its messages provide insights into system operations and health, to view kernel messages \textbf{dmesg} command could be used, which could help diagnose hardware and driver issues, and offer essential information for system administrators. And if it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -123,9 +131,8 @@ while True:
         print(output, end='')
 \end{lstlisting}
 
-\section{Capturing Keyboard and Mouse Events}
-Capturing keyboard and mouse events is vital for understanding user interactions. Tools like \textbf{pynput} in Python allow you to record keystrokes and mouse clicks. While this can be useful for monitoring productivity, it should be approached with caution to respect user privacy.
-
+\subsection{Capturing Keyboard and Mouse Events}
+A notoriously known way to get information in a more of a discreet way would be to check and capture user's input - keyboard and mouse events. Of course that comes with a drawback of a huge security and privacy flaw - the user is fully exposed to a tool like a keylogger, which could expose very sensitive data. Tools like \textbf{pynput} in Python allow you to record keystrokes and mouse clicks and while this can be useful for monitoring productivity, it should be approached with caution to respect user privacy. If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 from pynput.keyboard import Key, Listener
 
@@ -142,9 +149,10 @@ with Listener(on_press=on_key_press, on_release=on_key_release) as
     listener.join()
 \end{lstlisting}
 
-\section{Idle Time Monitoring}
-Monitoring user idle time involves determining periods of inactivity, which can be helpful for various applications, including power management and security. Utilizing tools like \textbf{xprintidle}, it's possible to track idle time based on keyboard and mouse interactions.
+\subsection{Idle Time Monitoring}
+Sometimes invaluable data like a how many hours have been spent inactive during business hours would be useful for micro-management, security or power management, one of the ways to utilize and monitor idle time in Linux would be to use a tool like \textbf{xprintidle} to track the idle time based on user's keyboard and mouse interactions with the OS.
 
+If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -157,10 +165,9 @@ except FileNotFoundError:
     print("xprintidle is not installed.")
 \end{lstlisting}
 
-\section{Process Monitoring}
-Process monitoring, often performed with tools like \textbf{strace}, is essential for tracking the system calls made by running applications. This is instrumental in diagnosing issues and understanding how processes interact with the operating system.
+\subsection{Process Monitoring}
 
-
+Process monitoring is essential for tracking the system calls made by running applications, it can be used with tools like \textbf{strace}, as it is instrumental in diagnosing issues and understanding how processes interact with the operating system, easier to check which processes are running in the background for \textit{n} of time. If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -176,9 +183,8 @@ while True:
         print(output, end='')
 \end{lstlisting}
 
-\section{Active Window Detection}
-Detecting the active window or application in a graphical desktop environment can be achieved with tools like \textbf{ewmh} in Python. It helps in understanding user focus and application usage patterns, which can be valuable for optimizing workflows and identifying resource-intensive tasks.
-
+\subsection{Active Window Detection}
+For the use case of counting for how long a singular window or application has been running can be achieved with tools like \textbf{ewmh} in Python. It helps to understand the user's focus and application usage patterns, which can be valuable for optimizing workflows and identifying resource-intensive tasks, or even micro-managing the user on what has he been doing on company time. If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 from ewmh import EWMH
 
@@ -193,9 +199,8 @@ active_window = ewmh.getActiveWindow()
 print(f'Active Window Title: {active_window.get_wm_name()}')
 \end{lstlisting}
 
-\section{Web Proxy Logs (Squid)}
-Squid, a popular web proxy server, generates access logs that record web traffic. Analyzing these logs is critical for tracking user internet activity, ensuring security, and monitoring compliance with internet usage policies. Squid's logs offer insights into web access patterns and can help with content filtering and caching strategies.
-
+\subsection{Web Proxy Logs (Squid)}
+And last, but not least - Squid, a popular web proxy server, generates access logs that record web traffic. These logs are for tracking user internet activity, ensuring security, and monitoring compliance with internet usage policies, Squid's logs offer insights into web access patterns and can help with content filtering and caching strategies. If our tool would be extended to use IoT or any type of network connection this would be a good candidate for review. If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 import subprocess
 
@@ -227,6 +232,53 @@ try:
     print(access_log_content)
 except FileNotFoundError:
     print(f"Squid access log file {access_log_file} not found.")
+\end{lstlisting}
+
+\subsection{Analysis conclusion}
+After testing out overlooked methods for our use case, we have selected that \textbf{auditd} together with some use of \textbf{inotifywait} would be the best tools that would help us out for our use case overview in introduction.
+
+\section{auditd tool}
+\textbf{auditd} is similar to a black box on an airplane, it allows system administrators to record various system events such as executed commands, system calls, file access information, and network statistics. System administrators can use these logs to detect and track anomalous activity to pinpoint how the system was compromised. This follow-up analysis can help respond to incidents and improve security to avoid similar incidents in the future.
+
+For the use cases that are written in introduction section possible PoC testing solutions could be used, at least in bash command form before transforming them into a unified CLI tool:
+\begin{itemize}
+    \item \textbf{To detect file activity outside a designated (protected) folder using a combination of auditd and inotifywait with this example:}
+\end{itemize}
+\begin{lstlisting}[language=bash]
+# Set up inotifywait to watch over the protected folder
+inotifywait -m -r -e create,modify,attrib /path/to/protected_folder &
+
+# Set up an auditd rule to log inotifywait events
+auditctl -a always,exit -F arch=b64 -S inotify_init1 -k file_activity
+
+# Check the audit logs for file activity outside the designated folder
+ausearch -k file_activity
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{To detect file transfers to external drives:}
+\end{itemize}
+\begin{lstlisting}[language=bash]
+# Set up an audit rule to log file write events to removable devices
+auditctl -a always,exit -F dir=/media -F perm=w -k file_transfers
+
+# Check the audit logs for file transfers to external drives
+ausearch -k file_transfers
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{To monitor file modifications after selected (business) hours:}
+\end{itemize}
+\begin{lstlisting}[language=bash]
+# Set up an audit rule to log file writes after work hours 
+# (e.g., after 17:00)
+
+auditctl -a always,exit -F arch=b64 -S 
+    open,creat,truncate,ftruncate -F dir=/path/to/monitored_folder 
+    -F key=after_work_hours -F start=17:00 -F end=05:00
+
+# Check the audit logs for file modifications after work hours
+ausearch -k after_work_hours
 \end{lstlisting}
 
 \sectionnonum{Technological challenges}
