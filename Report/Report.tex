@@ -131,7 +131,7 @@ while True:
 \end{lstlisting}
 
 \subsubsection{Capturing Keyboard and Mouse Events}
-A notoriously known way to get information in a more of a discreet way would be to check and capture user's input - keyboard and mouse events. Of course that comes with a drawback of a huge security and privacy flaw - the user is fully exposed to a tool like a keylogger, which could expose very sensitive data. Tools like \textbf{pynput} in Python allow you to record keystrokes and mouse clicks and while this can be useful for monitoring productivity, it should be approached with caution to respect user privacy. If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
+A notoriously known way to get information in a more of discreet way would be to check and capture user's input - keyboard and mouse events. Of course that comes with a drawback of a huge security and privacy flaw - the user is fully exposed to a tool like a keylogger, which could expose very sensitive data. Tools like \textbf{pynput} in Python allow you to record keystrokes and mouse clicks and while this can be useful for monitoring productivity, it should be approached with caution to respect user privacy. If it were selected into a possible PoC (proof-of-concept) this would be an example Python script:
 \begin{lstlisting}[language=Python]
 from pynput.keyboard import Key, Listener
 
@@ -234,12 +234,12 @@ except FileNotFoundError:
 \end{lstlisting}
 
 \subsection{Analysis conclusion}
-After testing out overlooked methods for our use case, we have selected that \textbf{auditd} together with some use of \textbf{inotifywait} would be the best tools that would help us out for our use case overview in introduction.
+After testing out overlooked methods for our use case, we have selected that \textbf{auditd} together with some use of \textbf{inotifywait} would be the best tools that would help us out for our use case overview in the introduction.
 
 \subsection{auditd tool}
-\textbf{auditd} is similar to a black box on an airplane, it allows system administrators to record various system events such as executed commands, system calls, file access information, and network statistics. System administrators can use these logs to detect and track anomalous activity to pinpoint how the system was compromised. This follow-up analysis can help respond to incidents and improve security to avoid similar incidents in the future.
+\textbf{auditd} is similar to a black box on an airplane, it allows system administrators to record various system events such as executed commands, system calls, file access information and network statistics. System administrators can use these logs to detect and track anomalous activity to pinpoint how the system was compromised. This follow-up analysis can help respond to incidents and improve security to avoid similar incidents in the future.
 
-For the use cases that are written in introduction section possible PoC testing solutions could be used, at least in bash command form before transforming them into a unified CLI tool:
+For the use cases that are written in the introduction section possible PoC testing solutions could be used, at least in bash command form before transforming them into a unified CLI tool:
 \begin{itemize}
     \item \textbf{To detect file activity outside a designated (protected) folder using a combination of auditd and inotifywait with this example:}
 \end{itemize}
@@ -285,7 +285,7 @@ ausearch -k after_work_hours
         For the purpose of this paper, we will imagine that we have some protected folders in Linux.
         This folder will contain text data (in .csv format) of clients' personal information.
         Our imaginary company is running a Lithuanian e-shop website and needs to store users' data for a variety of reasons.
-        Data is stored in the following format: name, surname, email, phone number, birthDate, IP address,country
+        Data is stored in the following format: name, surname, email, phone number, birth, IP address, country
         During normal operation, new users can be created and delete data text files.
     \subsection{Behaviour patterns}
         To start using auditd we first need to decide on what user behavior could be tracked so that anomalies in said behaviors could be noticed and investigated.
@@ -294,36 +294,78 @@ ausearch -k after_work_hours
             \item Access Patterns - editing data files at irregular times. This pattern could tell us if data was accessed in an unusual time which could indicate something suspicious. Accessing data outside working hours or in irregular times, or accessing files very frequently could indicate that something bad is happening.
             \item Data manipulation patterns - user data can be created when a new user is registered or deleted when the user requests to be deleted. 
             During normal operation users rarely ask to be deleted so a change in the ratio and amount of created/deleted users could indicate something bad.
-            \item Email pattern - since the company is based in Lithuania it is expected that most users will either use popular email providers(Gmail, Outlook) or local Lithuanina email providers(Inbox.lt).
+            \item Email pattern - since the company is based in Lithuania it is expected that most users will either use popular email providers(Gmail, Outlook) or local Lithuanian email providers(Inbox.lt).
             Using strange and rarely used email providers could indicate something bad
         \end{itemize}
 
     \subsection{Anomaly detection}
         Being able to collect various data from Linux events is not enough.
         We need to detect anomalous behavior. 
-        For this purpose, we will use the mathematical probability model Markov Chain's.
-        Using this model we construct a probability diagram by giving Markov Chain's model a combination of described behavioral patterns attained from Linux event in hopes to see statistical anomalies.
+        For this purpose, we will use the mathematical probability model Markov Chain.
+        Using this model we construct a probability diagram by giving Markov Chain's model a combination of described behavioral patterns attained from Linux events in hopes of seeing statistical anomalies.
 
     \subsection{Markov Chain's}
         https://en.wikipedia.org/wiki/Markov\textunderscore chain
-        Markov Chain's were previously used to analyze activities from digital forensics https://www.researchgate.net/publication/4335500_Cyber_Criminal_Activity_Analysis_Models_using_Markov_Chain_for_Digital_Forensics
+        Markov Chain were previously used to analyze activities from digital forensics https://www.researchgate.net/publication/4335500_Cyber_Criminal_Activity_Analysis_Models_using_Markov_Chain_for_Digital_Forensics
 
-        In future some behavioural patterns might change to fit Markov Chain's model
+        In future some behavioral patterns might change to fit Markov Chain's model
 
 	
 \section{Hypotheses}
-    It is possible to detect anomalies in Linux event behavioural patterns using Markov Chain's
+    It is possible to detect anomalies in Linux event behavioral patterns using Markov Chain's
 	
 \section{Design of the tool}
-    Tool will be Python program using click library. 
-    Click library will enable us to access terminal console to run python program as terminal script.
+    The tool will be a Python program using the click library. 
+    Click library will enable us to access the terminal console to run the Python program as a terminal script.
+    Test data on Linux events will be parsed and inputted to the Markov Chain model.
+    After that, the following Linux event will be inputted Markov Chain will say what is probability of said event is.
+    If the probability is lower then some threshold Linux event will be considered an anomaly and flagged in the report.
     
 
 \section{Algorithm}
+    \begin{lstlisting}[language=Python]
+Algorithm MarkovChainBasedEventPrediction
+
+Data:
+    events: a list of events
+    threshold: a threshold value for event probability
+
+Methods:
+
+    Train(events):
+        Pass the list of events to a Markov Chain model to generate 
+        a transition matrix (or equivalent structure).
+
+    GetProbability(event):
+        Use the Markov Chain model to find the probability of 
+        the passed event based on previous states.
+        Return the calculated probability.
+
+    IsEventProbable(event, threshold):
+        probability = GetProbability(event)
+        
+        If probability < threshold:
+            Return False, event
+        Else:
+            Return True, event
+
+Main:
+    Train(events)
+    
+    For each event in events:
+        result, event = IsEventProbable(event, threshold)
+        
+        If not result:
+            Print "Event", event, "is not probable."
+        Else:
+            Print "Event", event, "is probable."
+
+\end{lstlisting}
 
 
 \section{Visual report/diagnostics}
-
+    The report will be presented as a scatter plot where the X-axis is the event index/id or date of the event and the Y-axis is the probability of an event.
+    Low probability events should be spikes that would indicate that some anomalous event happened
 
 		
 \pagebreak
